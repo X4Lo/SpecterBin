@@ -1,12 +1,16 @@
 export interface PasteObject {
-  id: number;
+  id?: string;
   isPasswordProtected: boolean;
-  data: string;
-
-  availableDate: Date;
-  burnDate: Date;
+  hasBeenDecrypted?: boolean;
+  availableDate?: Date;
+  burnAfterDate?: Date;
   burnAfterRead: boolean;
-  title: string;
-  formatingStyle: string;
-  content: string;
+  encryptedData?: string;
+
+  password?: string;
+  title?: string;
+  syntaxHighlightingStyle?: string;
+  content?: string;
+
+  createdAt?: Date;
 }
