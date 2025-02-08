@@ -35,7 +35,7 @@ export class PastesManager {
     const currentDate = new Date();
     // has already been read
     if (pasteObject.hasBeenDecrypted) {
-      return undefined;
+      return pasteObject;
     }
 
     // expired

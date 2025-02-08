@@ -11,7 +11,7 @@ interface PasteCreatedModalProps {
 }
 
 const PasteCreatedModal: React.FC<PasteCreatedModalProps> = ({ isOpen, onClose, pasteId }) => {
-  const pasteUrl = `${window.location.origin}/pastes/${pasteId}`;
+  const pasteUrl = `${window.location.origin}/${pasteId}`;
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
