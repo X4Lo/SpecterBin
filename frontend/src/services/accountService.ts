@@ -8,7 +8,7 @@ export const accountService = {
   },
 
   async createAccount(): Promise<Account> {
-    const response = await apiClient.post<Account>("/accounts/", {});
+    const response = await apiClient.post<Account>("/accounts", {});
     return response.data;
   },
 };

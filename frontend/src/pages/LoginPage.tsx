@@ -14,17 +14,25 @@ const LoginPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  async function handleLogin() {
+  const handleLogin = async () => {
     const formatedAccountNumber = accountNumber.trim().split(" ").join("");
 
     if (formatedAccountNumber.length == 36) {
-      const account = await accountService.getAccountByAccountNumber(
-        formatedAccountNumber
-      );
+      try {
+        const account = await accountService.getAccountByAccountNumber(
+          formatedAccountNumber
+        );
 
-      authService.login(account.accountNumber);
-      navigate("/my-pastes");
-      return;
+        authService.login(account.accountNumber);
+        navigate("/my-pastes");
+      } catch (error: any) {
+        console.log(error);
+        toast({
+          title: "Invalid Account Number",
+          description: error.response.data.error,
+          variant: "destructive",
+        });
+      }
     } else {
       toast({
         title: "Invalid Account Number",
@@ -32,15 +40,14 @@ const LoginPage: React.FC = () => {
         variant: "destructive",
       });
     }
-  }
+  };
 
-  async function handleCreateAccount() {
+  const handleCreateAccount = async () => {
     try {
       const account = await accountService.createAccount();
       setAccountNumber(
         account.accountNumber.match(/\d{1,6}/g)?.join(" ") || ""
       );
-      // setAccountNumber(account.accountNumber);
       setIsModalOpen(true);
     } catch (error) {
       toast({
@@ -49,7 +56,7 @@ const LoginPage: React.FC = () => {
         variant: "destructive",
       });
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background p-6 flex flex-col">
