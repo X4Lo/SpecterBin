@@ -1,10 +1,10 @@
 const AccountService = require("../services/account.service");
+const { generateStructuredNumbers } = require("../utils/randomGenerator");
 
 const AccountController = {
   createAccount: async (req, res) => {
     try {
-      const { AccountNumber } = req.body;
-      const account = await AccountService.createAccount(AccountNumber);
+      const account = await AccountService.createAccount();
       res.status(201).json(account);
     } catch (error) {
       res.status(400).json({ error: error.message });
