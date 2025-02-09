@@ -35,6 +35,7 @@ import DateTimeInput from "@/components/DateTimeInput";
 import { PastesManager } from "@/services/pastesManager";
 import { PasteObject } from "@/types/PasteObject";
 import PasteCreatedModal from "@/components/PasteCreatedModal";
+import { useToast } from "@/hooks/use-toast";
 
 const languages = [
   { value: "plain", label: "Plain Text" },
@@ -84,6 +85,7 @@ const NewPastePage: React.FC = () => {
   const [highlightedCode, setHighlightedCode] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pasteId, setPasteId] = useState("");
+  const { toast } = useToast();
 
   const form = useForm<PasteFormValues>({
     defaultValues: {
@@ -112,6 +114,11 @@ const NewPastePage: React.FC = () => {
 
   function onSubmit(data: PasteFormValues) {
     if (data.content.trim() == "") {
+      toast({
+        title: "Error",
+        description: "The content cannot be empty.",
+        variant: "destructive",
+      });
       return;
     }
 

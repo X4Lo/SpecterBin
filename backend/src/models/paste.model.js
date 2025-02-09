@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const { generateRandomString } = require("../utils/randomGenerator");
 
 const PasteSchema = new mongoose.Schema({
-  id: { type: String, unique: true, default: generateRandomString },
+  id: { type: String, unique: true },
   isPasswordProtected: { type: Boolean, default: false },
   accountNumber: { type: String },
   encryptedData: { type: String },

@@ -5,9 +5,14 @@ class AuthService {
   async login(accountNumber: string) {
     LocalStorageService.setItem("accountNumber", accountNumber);
   }
+
   // Perform logout
   logout(): void {
     LocalStorageService.removeItem("accountNumber");
+  }
+
+  getCurrentAccountNumber(): string | undefined | null {
+    return LocalStorageService.getItem("accountNumber");
   }
 
   // Check if the user is authenticated

@@ -1,6 +1,7 @@
 import { PasteObject } from "@/types/PasteObject";
 import { EncryptionService } from "./encryptionService";
 import { pastesService } from "./pastesService";
+import authService from "./authService";
 
 export class PastesManager {
   static async createPaste(pasteObject: PasteObject) {
@@ -24,6 +25,10 @@ export class PastesManager {
       pasteObject.syntaxHighlightingStyle = undefined;
       pasteObject.content = undefined;
       pasteObject.password = undefined;
+    }
+
+    if (authService.isAuthenticated()) {
+      pasteObject.accountNumber = authService.getCurrentAccountNumber()!;
     }
 
     return pastesService.createPaste(pasteObject);
