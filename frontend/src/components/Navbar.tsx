@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { FaPlus, FaList, FaSignOutAlt } from "react-icons/fa"; // Updated icons
+import { FaPlus, FaList, FaSignOutAlt } from "react-icons/fa";
 import authService from "@/services/authService";
 
 const Navbar: React.FC = () => {
@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
           {/* Logo and Site Title */}
           <div className="flex items-center">
             <img src="/path/to/logo.png" alt="Logo" className="h-8 w-8 mr-2" />
-            <div className="text-lg font-bold text-gray-800">Pastebin Clone</div>
+            <div className="text-lg font-bold text-gray-800">SpecterBin</div>
           </div>
 
           {/* Navigation Links */}
@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
                 isActive("/new") ? "text-blue-500" : "text-gray-700"
               }`}
             >
-              <FaPlus className="mr-2" /> {/* Updated icon */}
+              <FaPlus className="mr-2" />
               New
             </Link>
 
@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
                 isActive("/my-pastes") ? "text-blue-500" : "text-gray-700"
               }`}
             >
-              <FaList className="mr-2" /> {/* Updated icon */}
+              <FaList className="mr-2" />
               My Pastes
             </Link>
           </nav>
