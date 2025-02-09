@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { FaPlus, FaList, FaSignOutAlt } from "react-icons/fa";
+import { FaPlus, FaList, FaSignOutAlt, FaSignInAlt } from "react-icons/fa";
 import authService from "@/services/authService";
 
 const Navbar: React.FC = () => {
@@ -11,6 +11,10 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     authService.logout();
+    navigate("/");
+  };
+
+  const handleLogin = () => {
     navigate("/login");
   };
 
@@ -52,13 +56,25 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="flex items-center text-red-600"
-        >
-          <FaSignOutAlt className="mr-2" />
-          Logout
-        </button>
+        <div className="flex items-center space-x-4">
+          {authService.isAuthenticated() ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center text-red-600"
+            >
+              <FaSignOutAlt className="mr-2" />
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="flex items-center text-green-600"
+            >
+              <FaSignInAlt className="mr-2" />
+              Login
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );
