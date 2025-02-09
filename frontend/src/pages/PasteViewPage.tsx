@@ -28,7 +28,11 @@ const PasteViewPage: React.FC = () => {
     pastesService
       .getPasteById(pasteId)
       .then((result) => {
-        setPasteObject({ ...result, hasBeenDecrypted: false });
+        if (!result) {
+          navigate("/not-found");
+        } else {
+          setPasteObject({ ...result, hasBeenDecrypted: false });
+        }
       })
       .catch((error) => {
         // todo: redirect to NotFoundPage

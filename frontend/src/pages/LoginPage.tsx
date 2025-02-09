@@ -52,9 +52,9 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto z-30">
-        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <div className="min-h-screen bg-background p-6 flex flex-col">
+      <div className="container mx-auto z-30 flex-1 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
           <h1 className="text-2xl font-bold mb-6">Login</h1>
           <Input
             type="text"

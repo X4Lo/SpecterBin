@@ -23,7 +23,6 @@ const CreateAccountDialog: React.FC<CreateAccountDialogProps> = ({
   accountNumber,
 }) => {
   const [loginLink, setLoginLink] = useState("");
-  const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
@@ -38,7 +37,6 @@ const CreateAccountDialog: React.FC<CreateAccountDialogProps> = ({
     toast({
       title: "Copied",
       description: "Text copied to clipboard.",
-      variant: "destructive",
     });
   };
 
