@@ -32,7 +32,9 @@ export const pastesService = {
     return response.data;
   },
 
-  async deletePasteById(id: number): Promise<void> {
-    await apiClient.delete(`/pastes/${id}`);
+  async deletePasteById(id: string, accountNumber: string): Promise<void> {
+    await apiClient.delete(`/pastes/${id}`, {
+      data: { accountNumber },
+    });
   },
 };

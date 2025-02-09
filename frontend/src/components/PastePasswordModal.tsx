@@ -24,11 +24,6 @@ const PastePasswordModal: React.FC<PasswordModalProps> = ({
   const [password, setPassword] = useState("");
 
   const handleSubmit = () => {
-    // if (!password) {
-    //   setError("Password is required");
-    //   return;
-    // }
-    // setError("");
     onSubmit(password);
   };
 

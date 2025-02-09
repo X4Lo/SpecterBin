@@ -2,41 +2,26 @@ const PasteService = require("../services/paste.service");
 
 const PasteController = {
   createPaste: async (req, res) => {
-    try {
-      const paste = await PasteService.createPaste(req.body);
-      res.status(201).json(paste);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
+    const paste = await PasteService.createPaste(req.body);
+    res.status(201).json(paste);
   },
 
   getPasteById: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const paste = await PasteService.getPasteById(id);
-      res.json(paste);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
+    const { id } = req.params;
+    const paste = await PasteService.getPasteById(id);
+    res.json(paste);
   },
 
   getPastesByAccount: async (req, res) => {
-    try {
-      const { accountNumber } = req.params;
-      const pastes = await PasteService.getPastesByAccount(accountNumber);
-      res.json(pastes);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
+    const { accountNumber } = req.params;
+    const pastes = await PasteService.getPastesByAccount(accountNumber);
+    res.json(pastes);
   },
 
   deletePaste: async (req, res) => {
-    try {
-      await PasteService.deletePaste(req.params.id);
-      res.status(204).send();
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
+    const { accountNumber } = req.body;
+    await PasteService.deletePaste(req.params.id, accountNumber);
+    res.status(204).send();
   },
 };
 
