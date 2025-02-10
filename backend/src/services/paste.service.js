@@ -77,6 +77,10 @@ const PasteService = {
 
     return await PasteRepository.deleteById(pasteId);
   },
+
+  deleteExpiredPastes: async (date = new Date()) => {
+    return await PasteRepository.deleteExpired(date);
+  }
 };
 
 module.exports = PasteService;

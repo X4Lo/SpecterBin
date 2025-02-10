@@ -5,9 +5,13 @@ const connectDB = require("./config/database");
 const accountRoutes = require("./routes/account.routes");
 const pasteRoutes = require("./routes/paste.routes");
 const errorHandler = require("./middlewares/errorHandler");
+const deleteExpiredPastes = require("./tasks/deleteExpiredPastes");
 
 const app = express();
 connectDB();
+
+// running pastes cleanup every 10 minutes (600,000 ms)
+setInterval(deleteExpiredPastes, 10 * 60 * 1000);
 
 app.use(
   cors({
