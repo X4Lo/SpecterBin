@@ -5,42 +5,32 @@ import routes from "./routes/routeConfig";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { ThemeProvider } from "./providers/theme-provider";
 import ThemeSwitcher from "./components/ThemeSwitcher";
-import { useEffect } from "react";
 
 function App() {
-
-
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-
-  }, []);
-
   return (
-    <div>
-      <ThemeProvider>
+    <ThemeProvider>
+      <div className="flex flex-col h-screen">
         <Navbar />
-        <div>
-          <Routes>
-            {routes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={
-                  route.isProtected ? (
-                    <ProtectedRoute>
-                      <route.component />
-                    </ProtectedRoute>
-                  ) : (
+        <Routes>
+          {routes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                route.isProtected ? (
+                  <ProtectedRoute>
                     <route.component />
-                  )
-                }
-              />
-            ))}
-          </Routes>
-        </div>
-        <ThemeSwitcher />
-      </ThemeProvider>
-    </div>
+                  </ProtectedRoute>
+                ) : (
+                  <route.component />
+                )
+              }
+            />
+          ))}
+        </Routes>
+        <ThemeSwitcher className="mt-4 ml-auto mr-4" />
+      </div>
+    </ThemeProvider>
   );
 }
 

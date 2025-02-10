@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background">
-      <div className="container mx-auto flex h-16 items-center justify-between">
+      <div className="container mx-auto max-w-5xl flex h-16 items-center justify-between">
         {/* Logo, Title, and Navigation Links */}
         <div className="flex items-center space-x-6">
           {/* Logo and Site Title */}
@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
               <FaPlus className="mr-2" />
               New
             </Link>
-
+            {authService.isAuthenticated() && (
             <Link
               to="/my-pastes"
               className={`flex items-center ${
@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
             >
               <FaList className="mr-2" />
               My Pastes
-            </Link>
+            </Link>)}
           </nav>
         </div>
 

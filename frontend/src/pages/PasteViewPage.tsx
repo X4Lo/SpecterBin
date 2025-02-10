@@ -24,14 +24,18 @@ const PasteViewPage: React.FC = () => {
       navigate("/new");
       return;
     }
-    
+
     pastesService
       .getPasteById(pasteId)
       .then((result) => {
         setPasteObject({ ...result, hasBeenDecrypted: false });
       })
       .catch((error) => {
-        navigate("/not-found");
+        if (error.response.status == 403) {
+          navigate("/not-available");
+        } else {
+          navigate("/not-found");
+        }
       });
   }, []);
 
@@ -39,10 +43,9 @@ const PasteViewPage: React.FC = () => {
     if (!pasteObject) return;
 
     if (!pasteObject.isPasswordProtected) {
+      highlightContent();
       setIsLoading(false);
     }
-
-    setIsPasswordModalOpen(true);
 
     if (
       pasteObject.isPasswordProtected &&
@@ -63,17 +66,7 @@ const PasteViewPage: React.FC = () => {
           setErrorMessage(undefined);
 
           // Syntax Hightlighting
-          if (
-            pasteObject.content &&
-            pasteObject.syntaxHighlightingStyle !== "plain"
-          ) {
-            const highlighted = hljs.highlight(pasteObject.content, {
-              language: pasteObject.syntaxHighlightingStyle || "plain",
-            }).value;
-            setHighlightedCode(highlighted);
-          } else {
-            setHighlightedCode(pasteObject.content!);
-          }
+          highlightContent();
         })
         .catch((error) => {
           // todo: handle incorrect password
@@ -87,8 +80,8 @@ const PasteViewPage: React.FC = () => {
     }
   }, [pasteObject]);
 
-  function exportToFile() {
-    const content = pasteObject?.content || "";
+  const exportToFile = () => {
+    const content = pasteObject?.content!;
     const title = pasteObject?.title || "untitled";
     let syntaxHighlightingStyle = pasteObject?.syntaxHighlightingStyle;
 
@@ -103,11 +96,27 @@ const PasteViewPage: React.FC = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }
+  };
 
   function copyToClipboard() {
     navigator.clipboard.writeText(pasteObject?.content || "");
   }
+
+  const highlightContent = () => {
+    if (!pasteObject) return;
+
+    if (
+      pasteObject.content &&
+      pasteObject.syntaxHighlightingStyle !== "plain"
+    ) {
+      const highlighted = hljs.highlight(pasteObject.content, {
+        language: pasteObject.syntaxHighlightingStyle || "plain",
+      }).value;
+      setHighlightedCode(highlighted);
+    } else {
+      setHighlightedCode(pasteObject.content!);
+    }
+  };
 
   const handlePasswordSubmit = async (password: string) => {
     if (!password) {
@@ -128,8 +137,8 @@ const PasteViewPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto z-30">
+    <div className="flex-1 bg-background p-6 overflow-auto">
+      <div className="container mx-auto max-w-5xl z-30">
         {isLoading ? (
           <>
             <Loader />

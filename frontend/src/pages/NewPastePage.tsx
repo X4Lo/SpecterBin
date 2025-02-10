@@ -203,11 +203,11 @@ const NewPastePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto z-30">
+    <div className="flex-1 bg-background p-6 overflow-auto">
+      <div className="container mx-auto max-w-5xl z-30">
         <div className="mb-8 flex items-center gap-3">
           <Code2Icon className="h-8 w-8" />
-          <h1 className="text-3xl font-bold">DevBin</h1>
+          <h1 className="text-3xl font-bold">New Paste</h1>
         </div>
 
         <Form {...form}>
@@ -260,7 +260,7 @@ const NewPastePage: React.FC = () => {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem className="w-48">
+                  <FormItem className="w-40">
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
@@ -290,7 +290,7 @@ const NewPastePage: React.FC = () => {
                 control={form.control}
                 name="burnAfter"
                 render={({ field }) => (
-                  <FormItem className="w-40">
+                  <FormItem className="w-30">
                     <FormLabel>Burn After</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
@@ -314,14 +314,16 @@ const NewPastePage: React.FC = () => {
                 control={form.control}
                 name="burnAfterRead"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center gap-2 space-y-0">
+                  <FormItem className="flex flex-row items-center gap-2 space-y-0 mb-2">
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <FormLabel>Burn after read</FormLabel>
+                    <FormLabel className="flex items-center">
+                      Burn after read
+                    </FormLabel>
                   </FormItem>
                 )}
               />

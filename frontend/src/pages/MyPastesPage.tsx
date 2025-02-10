@@ -135,8 +135,8 @@ const MyPastesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto z-30">
+    <div className="flex-1 bg-background p-6 overflow-auto">
+      <div className="container mx-auto max-w-5xl z-30">
         <div className="flex justify-between items-center mb-6">
           <Input
             type="text"
