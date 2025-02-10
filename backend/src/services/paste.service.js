@@ -15,11 +15,19 @@ const PasteService = {
 
     // if the paste has an account number, verify if that account exists
     if (pasteData.accountNumber) {
+      if (pasteData.accountNumber.length != 36) {
+        throw new ValidationError("Account does not exist!")
+      }
+
       const account = await AccountRepository.findByAccountNumber(pasteData.accountNumber)
 
       if (!account) {
         throw new ValidationError("Account does not exist!")
       }
+    }
+
+    if (pasteData.availableDate && pasteData.availableDate < new Date()) {
+      throw new ValidationError("Available date must be greater that the current date!")
     }
 
     pasteData.id = randomId;
@@ -28,9 +36,26 @@ const PasteService = {
   },
 
   getPasteById: async (id) => {
-    const paste = await PasteRepository.findById(id)
+    const paste = await PasteRepository.findById(id);
 
     if (!paste) throw new NotFoundError("Paste not found.")
+
+    // burn after date
+    if (paste.burnAfterDate && paste.burnAfterDate < new Date()) {
+      await PasteRepository.deleteById(id);
+      throw new NotFoundError("Paste not found.")
+    }
+
+    // availableDate
+    // TODO: allow paste creator to view before
+    if (paste.availableDate && paste.availableDate > new Date()) {
+      throw new ForbiddenError("You do not have the permission to view this paste yet!");
+    }
+
+    // burn after read
+    if (paste.burnAfterRead) {
+      await PasteRepository.deleteById(id);
+    }
 
     return paste;
   },

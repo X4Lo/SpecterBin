@@ -6,7 +6,7 @@ const PasteRepository = {
     await Paste.findOne({ id: id }, { accountNumber: 0 }),
   findByAccountNumber: async (accountNumber) =>
     await Paste.find({ accountNumber: accountNumber }),
-  deleteById: async (id) => await Paste.findOne({ id: id }),
+  deleteById: async (id) => await Paste.deleteOne({ id: id }),
 
 };
 

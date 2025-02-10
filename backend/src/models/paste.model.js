@@ -5,7 +5,7 @@ const PasteSchema = new mongoose.Schema({
   isPasswordProtected: { type: Boolean, default: false },
   accountNumber: { type: String },
   encryptedData: { type: String },
-  BurnAfterRead: { type: Boolean, default: false },
+  burnAfterRead: { type: Boolean, default: false },
   burnAfterDate: { type: Date },
   availableDate: { type: Date },
   title: { type: String },
