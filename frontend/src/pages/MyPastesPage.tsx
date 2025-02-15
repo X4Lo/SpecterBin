@@ -191,12 +191,12 @@ const MyPastesPage: React.FC = () => {
                   </div>
                 </TableCell>
                 <TableCell>{paste.burnAfterRead ? "Yes" : "No"}</TableCell>
-                <TableCell>0</TableCell>
+                <TableCell>{paste.views ? paste.views : 0}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
+                    {/* <Button variant="outline" size="sm">
                       Modify
-                    </Button>
+                    </Button> */}
                     <Button
                       variant="destructive"
                       size="sm"

@@ -40,21 +40,29 @@ const PasteService = {
 
     if (!paste) throw new NotFoundError("Paste not found.")
 
+    const currentDate = new Date();
+
     // burn after date
-    if (paste.burnAfterDate && paste.burnAfterDate < new Date()) {
+    if (paste.burnAfterDate && paste.burnAfterDate < currentDate) {
       await PasteRepository.deleteById(id);
       throw new NotFoundError("Paste not found.")
     }
 
     // availableDate
     // TODO: allow paste creator to view before
-    if (paste.availableDate && paste.availableDate > new Date()) {
+    if (paste.availableDate && paste.availableDate > currentDate) {
       throw new ForbiddenError("You do not have the permission to view this paste yet!");
     }
 
     // burn after read
     if (paste.burnAfterRead) {
       await PasteRepository.deleteById(id);
+    }
+
+    // increase views counter
+    if (!paste.burnAfterRead && (paste.burnAfterDate && paste.burnAfterDate > currentDate)) {
+      paste.views += 1;
+      await PasteRepository.updateById(paste.id, paste);
     }
 
     return paste;

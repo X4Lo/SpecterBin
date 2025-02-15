@@ -8,6 +8,12 @@ const PasteRepository = {
     await Paste.find({ accountNumber: accountNumber }),
   deleteById: async (id) => await Paste.deleteOne({ id: id }),
   deleteExpired: async (date) => await Paste.deleteMany({ burnAfterDate: { $lte: date } }),
+  updateById: async (id, updateData) =>
+    await Paste.findOneAndUpdate(
+      { id: id },
+      { $set: updateData },
+      { new: true }
+    ),
 };
 
 module.exports = PasteRepository;

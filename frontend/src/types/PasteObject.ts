@@ -12,5 +12,7 @@ export interface PasteObject {
   syntaxHighlightingStyle?: string;
   content?: string;
 
+  views?: number;
+
   createdAt?: Date;
 }
