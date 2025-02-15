@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import hljs from "highlight.js";
 import Loader from "@/components/Loader";
 import { useToast } from "@/hooks/use-toast";
+import { getLanguageExtention } from "@/utils/highlitingLanguages";
 
 const PasteViewPage: React.FC = () => {
   const { pasteId } = useParams<{ pasteId: string }>();
@@ -81,17 +82,25 @@ const PasteViewPage: React.FC = () => {
   }, [pasteObject]);
 
   const exportToFile = () => {
-    const content = pasteObject?.content!;
-    const title = pasteObject?.title || "untitled";
-    let syntaxHighlightingStyle = pasteObject?.syntaxHighlightingStyle;
+    if (!pasteObject || !pasteObject.content) return;
 
-    if (syntaxHighlightingStyle == "plain") syntaxHighlightingStyle = "txt";
+    const content = pasteObject.content;
+    let title = pasteObject.title || "untitled";
+
+    // sanitizing title
+    title = title
+      .replace(/[^a-zA-Z0-9\s]/g, "_")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    const syntaxHighlightingStyle = pasteObject.syntaxHighlightingStyle;
+    const extension = getLanguageExtention(syntaxHighlightingStyle || "plain");
 
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${title}.${syntaxHighlightingStyle}`;
+    a.download = `${title}.${extension}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -142,66 +151,66 @@ const PasteViewPage: React.FC = () => {
 
   return (
     <div className="flex-1 bg-background p-6 overflow-auto">
-  <div className="container mx-auto max-w-5xl z-30">
-    {isLoading ? (
-      <>
-        <Loader />
-      </>
-    ) : (
-      <>
-        {/* Paste Title and Buttons */}
-        {pasteObject?.title && (
-          <div className="mb-8 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Code2Icon className="h-8 w-8" />
-              <h1 className="text-3xl font-bold">{pasteObject?.title}</h1>
+      <div className="container mx-auto max-w-5xl z-30">
+        {isLoading ? (
+          <>
+            <Loader />
+          </>
+        ) : (
+          <>
+            {/* Paste Title and Buttons */}
+            {pasteObject?.title && (
+              <div className="mb-8 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <Code2Icon className="h-8 w-8" />
+                  <h1 className="text-3xl font-bold">{pasteObject?.title}</h1>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={copyToClipboard}
+                    className="flex gap-2"
+                  >
+                    <CopyIcon className="h-4 w-4" />
+                    Copy
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={exportToFile}
+                    className="flex gap-2"
+                  >
+                    <DownloadIcon className="h-4 w-4" />
+                    Export
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Content Preview */}
+            <div className="space-y-2">
+              <div className="relative">
+                <pre className="rounded-md p-4 overflow-x-auto min-h-[400px] border-2 border-gray-200">
+                  <code
+                    className={`language-${pasteObject?.syntaxHighlightingStyle}`}
+                    dangerouslySetInnerHTML={{
+                      __html: highlightedCode || "No content to preview",
+                    }}
+                  />
+                </pre>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={copyToClipboard}
-                className="flex gap-2"
-              >
-                <CopyIcon className="h-4 w-4" />
-                Copy
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={exportToFile}
-                className="flex gap-2"
-              >
-                <DownloadIcon className="h-4 w-4" />
-                Export
-              </Button>
-            </div>
-          </div>
+          </>
         )}
 
-        {/* Content Preview */}
-        <div className="space-y-2">
-          <div className="relative">
-            <pre className="rounded-md p-4 overflow-x-auto min-h-[400px] border-2 border-gray-300">
-              <code
-                className={`language-${pasteObject?.syntaxHighlightingStyle}`}
-                dangerouslySetInnerHTML={{
-                  __html: highlightedCode || "No content to preview",
-                }}
-              />
-            </pre>
-          </div>
-        </div>
-      </>
-    )}
-
-    <PastePasswordModal
-      isOpen={isPasswordModalOpen}
-      onClose={handlePasswordClose}
-      onSubmit={handlePasswordSubmit}
-    />
-  </div>
-</div>
+        <PastePasswordModal
+          isOpen={isPasswordModalOpen}
+          onClose={handlePasswordClose}
+          onSubmit={handlePasswordSubmit}
+        />
+      </div>
+    </div>
   );
 };
 

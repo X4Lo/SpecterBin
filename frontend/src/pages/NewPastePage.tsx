@@ -37,27 +37,12 @@ import { PasteObject } from "@/types/PasteObject";
 import PasteCreatedModal from "@/components/PasteCreatedModal";
 import { useToast } from "@/hooks/use-toast";
 import { generateRandomString } from "@/utils/randomGenerator";
+import {
+  getHighlightingLanguages,
+  getLanguageExtention,
+} from "@/utils/highlitingLanguages";
 
-const languages = [
-  { value: "plain", label: "Plain Text" },
-  { value: "typescript", label: "TypeScript" },
-  { value: "javascript", label: "JavaScript" },
-  { value: "python", label: "Python" },
-  { value: "java", label: "Java" },
-  { value: "cpp", label: "C++" },
-  { value: "csharp", label: "C#" },
-  { value: "php", label: "PHP" },
-  { value: "ruby", label: "Ruby" },
-  { value: "go", label: "Go" },
-  { value: "rust", label: "Rust" },
-  { value: "sql", label: "SQL" },
-  { value: "html", label: "HTML" },
-  { value: "css", label: "CSS" },
-  { value: "json", label: "JSON" },
-  { value: "xml", label: "XML" },
-  { value: "markdown", label: "Markdown" },
-  { value: "yaml", label: "YAML" },
-];
+const languages = getHighlightingLanguages();
 
 const burnAfterOptions = [
   { value: "1h", label: "1 Hour" },
@@ -190,16 +175,24 @@ const NewPastePage: React.FC = () => {
 
   function exportToFile() {
     const content = form.getValues("content");
-    const title = form.getValues("title") || "untitled";
-    let syntaxHighlightingStyle = form.getValues("syntaxHighlightingStyle");
+    if (content.trim() == "") return;
 
-    if (syntaxHighlightingStyle == "plain") syntaxHighlightingStyle = "txt";
+    let title = form.getValues("title") || "untitled";
+
+    // sanitizing title
+    title = title
+      .replace(/[^a-zA-Z0-9\s]/g, "_")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    const syntaxHighlightingStyle = form.getValues("syntaxHighlightingStyle");
+    const extension = getLanguageExtention(syntaxHighlightingStyle || "plain");
 
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${title}.${syntaxHighlightingStyle}`;
+    a.download = `${title}.${extension}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -417,7 +410,7 @@ const NewPastePage: React.FC = () => {
                 />
               ) : (
                 <div className="relative">
-                  <pre className="rounded-md p-4 overflow-x-auto min-h-[400px] border-1">
+                  <pre className="rounded-md p-4 overflow-x-auto min-h-[400px] border-2 border-gray-200">
                     <code
                       className={`language-${watchSyntaxHighlightingStyle}`}
                       dangerouslySetInnerHTML={{
