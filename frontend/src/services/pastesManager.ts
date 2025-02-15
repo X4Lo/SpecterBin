@@ -5,28 +5,27 @@ import authService from "./authService";
 
 export class PastesManager {
   static async createPaste(pasteObject: PasteObject) {
-    // Encode Content
-    if (pasteObject.isPasswordProtected && pasteObject.password) {
-      const dataObject = {
-        title: pasteObject.title,
-        syntaxHighlightingStyle: pasteObject.syntaxHighlightingStyle,
-        content: pasteObject.content,
-      };
+    const dataObject = {
+      title: pasteObject.title,
+      syntaxHighlightingStyle: pasteObject.syntaxHighlightingStyle,
+      content: pasteObject.content,
+    };
 
-      const dataString = JSON.stringify(dataObject);
+    const dataString = JSON.stringify(dataObject);
 
-      const encryptedData = await EncryptionService.encrypt(
-        dataString,
-        pasteObject.password
-      );
+    // encrypt content
+    const encryptedData = await EncryptionService.encrypt(
+      dataString,
+      pasteObject.password!
+    );
 
-      pasteObject.encryptedData = encryptedData;
-      pasteObject.title = undefined;
-      pasteObject.syntaxHighlightingStyle = undefined;
-      pasteObject.content = undefined;
-      pasteObject.password = undefined;
-    }
+    pasteObject.encryptedData = encryptedData;
+    pasteObject.password = undefined;
+    pasteObject.title = undefined;
+    pasteObject.syntaxHighlightingStyle = undefined;
+    pasteObject.content = undefined;
 
+    // attach accounter number if user is authenticated
     if (authService.isAuthenticated()) {
       pasteObject.accountNumber = authService.getCurrentAccountNumber()!;
     }
@@ -53,15 +52,11 @@ export class PastesManager {
     }
 
     // no password given
-    if (pasteObject.isPasswordProtected && !pasteObject.password) {
+    if (!pasteObject.password) {
       return undefined;
     }
 
-    if (
-      pasteObject.isPasswordProtected &&
-      pasteObject.password &&
-      pasteObject.encryptedData
-    ) {
+    if (pasteObject.password && pasteObject.encryptedData) {
       const decryptedString = await EncryptionService.decrypt(
         pasteObject.encryptedData,
         pasteObject.password

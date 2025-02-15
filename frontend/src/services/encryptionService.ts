@@ -6,7 +6,7 @@ export class EncryptionService {
     return window.crypto.getRandomValues(new Uint8Array(length));
   }
 
-  static async generateKey(
+  static async deriveKey(
     password: string,
     salt: Uint8Array
   ): Promise<CryptoKey> {
@@ -31,10 +31,15 @@ export class EncryptionService {
     );
   }
 
-  static async encrypt(text: string, password: string): Promise<string> {
-    const salt = this.generateSalt();
-    const iv = window.crypto.getRandomValues(new Uint8Array(12));
-    const key = await this.generateKey(password, salt);
+  static async encrypt(
+    text: string,
+    password: string,
+    salt: Uint8Array<ArrayBuffer> = this.generateSalt(),
+    iv: Uint8Array<ArrayBuffer> = window.crypto.getRandomValues(
+      new Uint8Array(12)
+    )
+  ): Promise<string> {
+    const key = await this.deriveKey(password, salt);
 
     const encrypted = await window.crypto.subtle.encrypt(
       { name: "AES-GCM", iv },
@@ -61,7 +66,7 @@ export class EncryptionService {
     const iv = encryptedData.slice(16, 28);
     const data = encryptedData.slice(28);
 
-    const key = await this.generateKey(password, salt);
+    const key = await this.deriveKey(password, salt);
     const decrypted = await window.crypto.subtle.decrypt(
       { name: "AES-GCM", iv },
       key,

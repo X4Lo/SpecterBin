@@ -9,26 +9,35 @@ import { Code2Icon, CopyIcon, DownloadIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import hljs from "highlight.js";
 import Loader from "@/components/Loader";
+import { useToast } from "@/hooks/use-toast";
 
 const PasteViewPage: React.FC = () => {
   const { pasteId } = useParams<{ pasteId: string }>();
   const [pasteObject, setPasteObject] = useState<PasteObject>();
   const [isLoading, setIsLoading] = useState(true);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [highlightedCode, setHighlightedCode] = useState("");
   const navigate = useNavigate();
+  const { toast } = useToast();
 
+  // fetch paste by id
   useEffect(() => {
     if (!pasteId) {
       navigate("/new");
       return;
     }
 
+    // get paste password from url if provided
+    const passwordFromUrl = window.location.hash.substring(1);
+
     pastesService
       .getPasteById(pasteId)
       .then((result) => {
-        setPasteObject({ ...result, hasBeenDecrypted: false });
+        setPasteObject({
+          ...result,
+          hasBeenDecrypted: false,
+          password: passwordFromUrl,
+        });
       })
       .catch((error) => {
         if (error.response.status == 403) {
@@ -42,35 +51,26 @@ const PasteViewPage: React.FC = () => {
   useEffect(() => {
     if (!pasteObject) return;
 
-    if (!pasteObject.isPasswordProtected) {
-      highlightContent();
-      setIsLoading(false);
-    }
-
-    if (
-      pasteObject.isPasswordProtected &&
-      !pasteObject.hasBeenDecrypted &&
-      !pasteObject.password
-    ) {
+    if (!pasteObject.hasBeenDecrypted && !pasteObject.password) {
       setIsPasswordModalOpen(true);
-    } else if (
-      pasteObject.isPasswordProtected &&
-      !pasteObject.hasBeenDecrypted &&
-      pasteObject.password
-    ) {
+    } else if (!pasteObject.hasBeenDecrypted && pasteObject.password) {
       PastesManager.readPaste(pasteObject)
         .then((paste) => {
           setPasteObject(paste);
           setIsPasswordModalOpen(false);
           setIsLoading(false);
-          setErrorMessage(undefined);
 
           // Syntax Hightlighting
           highlightContent();
         })
         .catch((error) => {
           // todo: handle incorrect password
-          setErrorMessage("Incorrect Password!");
+          setIsPasswordModalOpen(true);
+          toast({
+            title: "Error",
+            description: "Incorrect Password.",
+            variant: "destructive",
+          });
           setPasteObject({
             ...pasteObject,
             password: undefined,
@@ -120,7 +120,11 @@ const PasteViewPage: React.FC = () => {
 
   const handlePasswordSubmit = async (password: string) => {
     if (!password) {
-      setErrorMessage("Password is required");
+      toast({
+        title: "Error",
+        description: "Password is required.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -138,69 +142,66 @@ const PasteViewPage: React.FC = () => {
 
   return (
     <div className="flex-1 bg-background p-6 overflow-auto">
-      <div className="container mx-auto max-w-5xl z-30">
-        {isLoading ? (
-          <>
-            <Loader />
-          </>
-        ) : (
-          <>
-            {/* Paste Title */}
-            {pasteObject?.title && (
-              <div className="mb-8 flex items-center gap-3">
-                <Code2Icon className="h-8 w-8" />
-                <h1 className="text-3xl font-bold">{pasteObject?.title}</h1>
-              </div>
-            )}
-
-            {/* Content Preview */}
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex gap-2"></div>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={copyToClipboard}
-                  className="flex gap-2"
-                >
-                  <CopyIcon className="h-4 w-4" />
-                  Copy
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={exportToFile}
-                  className="flex gap-2"
-                >
-                  <DownloadIcon className="h-4 w-4" />
-                  Export
-                </Button>
-              </div>
+  <div className="container mx-auto max-w-5xl z-30">
+    {isLoading ? (
+      <>
+        <Loader />
+      </>
+    ) : (
+      <>
+        {/* Paste Title and Buttons */}
+        {pasteObject?.title && (
+          <div className="mb-8 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Code2Icon className="h-8 w-8" />
+              <h1 className="text-3xl font-bold">{pasteObject?.title}</h1>
             </div>
-
-            <div className="space-y-2">
-              <div className="relative">
-                <pre className="rounded-md p-4 overflow-x-auto min-h-[400px] border-2 border-gray-300">
-                  <code
-                    className={`language-${pasteObject?.syntaxHighlightingStyle}`}
-                    dangerouslySetInnerHTML={{
-                      __html: highlightedCode || "No content to preview",
-                    }}
-                  />
-                </pre>
-              </div>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={copyToClipboard}
+                className="flex gap-2"
+              >
+                <CopyIcon className="h-4 w-4" />
+                Copy
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={exportToFile}
+                className="flex gap-2"
+              >
+                <DownloadIcon className="h-4 w-4" />
+                Export
+              </Button>
             </div>
-          </>
+          </div>
         )}
 
-        <PastePasswordModal
-          isOpen={isPasswordModalOpen}
-          errorMessage={errorMessage}
-          onClose={handlePasswordClose}
-          onSubmit={handlePasswordSubmit}
-        />
-      </div>
-    </div>
+        {/* Content Preview */}
+        <div className="space-y-2">
+          <div className="relative">
+            <pre className="rounded-md p-4 overflow-x-auto min-h-[400px] border-2 border-gray-300">
+              <code
+                className={`language-${pasteObject?.syntaxHighlightingStyle}`}
+                dangerouslySetInnerHTML={{
+                  __html: highlightedCode || "No content to preview",
+                }}
+              />
+            </pre>
+          </div>
+        </div>
+      </>
+    )}
+
+    <PastePasswordModal
+      isOpen={isPasswordModalOpen}
+      onClose={handlePasswordClose}
+      onSubmit={handlePasswordSubmit}
+    />
+  </div>
+</div>
   );
 };
 

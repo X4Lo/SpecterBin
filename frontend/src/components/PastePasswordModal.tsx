@@ -10,14 +10,12 @@ import { Input } from "@/components/ui/input";
 
 interface PasswordModalProps {
   isOpen: boolean;
-  errorMessage?: string;
   onClose: () => void;
   onSubmit: (password: string) => void;
 }
 
 const PastePasswordModal: React.FC<PasswordModalProps> = ({
   isOpen,
-  errorMessage,
   onClose,
   onSubmit,
 }) => {
@@ -39,7 +37,6 @@ const PastePasswordModal: React.FC<PasswordModalProps> = ({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {errorMessage && <p className="align-center text-red-500 text-sm text-center">{errorMessage}</p>}
         <Button onClick={handleSubmit} className="w-full mt-4">
           Unlock
         </Button>

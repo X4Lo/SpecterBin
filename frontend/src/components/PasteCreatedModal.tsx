@@ -1,23 +1,46 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ClipboardCopy } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface PasteCreatedModalProps {
   isOpen: boolean;
   onClose: () => void;
   pasteId: string;
+  pastePassword: string;
 }
 
-const PasteCreatedModal: React.FC<PasteCreatedModalProps> = ({ isOpen, onClose, pasteId }) => {
+const PasteCreatedModal: React.FC<PasteCreatedModalProps> = ({
+  isOpen,
+  onClose,
+  pasteId,
+  pastePassword,
+}) => {
   const pasteUrl = `${window.location.origin}/${pasteId}`;
-  const [copied, setCopied] = useState(false);
+  const pasteUrlWithPassword = `${window.location.origin}/${pasteId}#${pastePassword}`;
+  const { toast } = useToast();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(pasteUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    toast({
+      title: "Copied",
+      description: "Link copied to clipboard.",
+    });
+  };
+
+  const handleCopyWithPassword = () => {
+    navigator.clipboard.writeText(pasteUrlWithPassword);
+    toast({
+      title: "Copied",
+      description: "Link copied to clipboard.",
+    });
   };
 
   return (
@@ -25,7 +48,9 @@ const PasteCreatedModal: React.FC<PasteCreatedModalProps> = ({ isOpen, onClose, 
       <DialogContent className="max-w-md p-6 rounded-2xl shadow-lg">
         <DialogHeader>
           <DialogTitle>Paste Created Successfully</DialogTitle>
-          <DialogDescription>Your paste is now available at the link below.</DialogDescription>
+          <DialogDescription>
+            Your paste is now available at the links below.
+          </DialogDescription>
         </DialogHeader>
         <div className="flex items-center gap-2">
           <Input value={pasteUrl} readOnly className="flex-1" />
@@ -33,8 +58,16 @@ const PasteCreatedModal: React.FC<PasteCreatedModalProps> = ({ isOpen, onClose, 
             <ClipboardCopy className="w-5 h-5" />
           </Button>
         </div>
-        {copied && <p className="text-green-600 text-sm mt-2">Link copied to clipboard!</p>}
-        <Button onClick={onClose} className="w-full mt-4">Close</Button>
+        <DialogDescription>With password</DialogDescription>
+        <div className="flex items-center gap-2">
+          <Input value={pasteUrlWithPassword} readOnly className="flex-1" />
+          <Button onClick={handleCopyWithPassword} variant="outline">
+            <ClipboardCopy className="w-5 h-5" />
+          </Button>
+        </div>
+        <Button onClick={onClose} className="w-full mt-4">
+          Close
+        </Button>
       </DialogContent>
     </Dialog>
   );

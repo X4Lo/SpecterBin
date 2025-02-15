@@ -36,6 +36,7 @@ import { PastesManager } from "@/services/pastesManager";
 import { PasteObject } from "@/types/PasteObject";
 import PasteCreatedModal from "@/components/PasteCreatedModal";
 import { useToast } from "@/hooks/use-toast";
+import { generateRandomString } from "@/utils/randomGenerator";
 
 const languages = [
   { value: "plain", label: "Plain Text" },
@@ -85,6 +86,7 @@ const NewPastePage: React.FC = () => {
   const [highlightedCode, setHighlightedCode] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pasteId, setPasteId] = useState("");
+  const [pastePassword, setPastePassword] = useState("");
   const { toast } = useToast();
 
   const form = useForm<PasteFormValues>({
@@ -128,14 +130,20 @@ const NewPastePage: React.FC = () => {
       burnAfterDate = addToCurrentDate(data.burnAfter);
     }
 
-    const pasteObject: PasteObject = {
-      isPasswordProtected: data.password ? true : false,
+    let password = data.password;
 
+    // generate a radnom password if none was provided
+    if (!password) {
+      password = generateRandomString();
+      setPastePassword(password);
+    }
+
+    const pasteObject: PasteObject = {
       availableDate: data.availableDate,
       burnAfterDate: burnAfterDate,
       burnAfterRead: data.burnAfterRead,
 
-      password: data.password,
+      password: password,
       title: data.title,
       syntaxHighlightingStyle: data.syntaxHighlightingStyle,
       content: data.content,
@@ -426,6 +434,7 @@ const NewPastePage: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           pasteId={pasteId}
+          pastePassword={pastePassword}
         />
       </div>
     </div>

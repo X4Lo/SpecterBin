@@ -48,10 +48,8 @@ const MyPastesPage: React.FC = () => {
     fetchPastes();
   }, []);
 
-  const filteredPastes = pastes.filter(
-    (paste) =>
-      paste.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      paste.id!.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredPastes = pastes.filter((paste) =>
+    paste.id!.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleSelectPaste = (pasteId: string) => {
@@ -140,7 +138,7 @@ const MyPastesPage: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <Input
             type="text"
-            placeholder="Search by title or ID"
+            placeholder="Search by ID"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="max-w-md"
@@ -171,9 +169,8 @@ const MyPastesPage: React.FC = () => {
                   }}
                 />
               </TableHead>
-              <TableHead>Title/ID</TableHead>
+              <TableHead>ID</TableHead>
               <TableHead>Burn</TableHead>
-              <TableHead>Protected</TableHead>
               <TableHead>Views</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -194,9 +191,6 @@ const MyPastesPage: React.FC = () => {
                   </div>
                 </TableCell>
                 <TableCell>{paste.burnAfterRead ? "Yes" : "No"}</TableCell>
-                <TableCell>
-                  {paste.isPasswordProtected ? "Yes" : "No"}
-                </TableCell>
                 <TableCell>0</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
