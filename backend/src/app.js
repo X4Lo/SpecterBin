@@ -11,11 +11,11 @@ const app = express();
 connectDB();
 
 // running pastes cleanup every 10 minutes (600,000 ms)
-setInterval(deleteExpiredPastes, 10 * 60 * 1000);
+// setInterval(deleteExpiredPastes, 10 * 60 * 1000);
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization",
   })

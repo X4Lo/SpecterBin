@@ -34,8 +34,8 @@ export class EncryptionService {
   static async encrypt(
     text: string,
     password: string,
-    salt: Uint8Array<ArrayBuffer> = this.generateSalt(),
-    iv: Uint8Array<ArrayBuffer> = window.crypto.getRandomValues(
+    salt: Uint8Array = this.generateSalt(),
+    iv: Uint8Array = window.crypto.getRandomValues(
       new Uint8Array(12)
     )
   ): Promise<string> {

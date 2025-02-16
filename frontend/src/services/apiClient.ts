@@ -1,5 +1,4 @@
 import axios from "axios";
-import LocalStorageService from "./localStorageService";
 import authService from "./authService";
 
 console.log(import.meta.env);

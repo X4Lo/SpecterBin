@@ -64,7 +64,7 @@ const PasteViewPage: React.FC = () => {
           // Syntax Hightlighting
           highlightContent();
         })
-        .catch((error) => {
+        .catch(() => {
           // todo: handle incorrect password
           setIsPasswordModalOpen(true);
           toast({
